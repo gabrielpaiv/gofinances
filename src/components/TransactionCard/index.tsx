@@ -15,15 +15,26 @@ type Category = {
   icon: string
 }
 
-interface TransactionCardProps {
-  data: { title: string; amount: string; category: Category; date: string }
+export interface TransactionCardProps {
+  type: 'positive' | 'negative'
+  title: string
+  amount: string
+  category: Category
+  date: string
 }
 
-export function TransactionCard({ data }: TransactionCardProps) {
+interface TransactionCardComponentProps {
+  data: TransactionCardProps
+}
+
+export function TransactionCard({ data }: TransactionCardComponentProps) {
   return (
     <Container>
       <Title>{data.title}</Title>
-      <Amount>{data.amount}</Amount>
+      <Amount type={data.type}>
+        {data.type === 'negative' && '- '}
+        {data.amount}
+      </Amount>
       <Footer>
         <Category>
           <Icon name={data.category.icon} />

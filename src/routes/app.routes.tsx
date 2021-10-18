@@ -5,6 +5,7 @@ import { Dashboard } from '../screens/Dashboard'
 import { Register } from '../screens/Register'
 import { Platform } from 'react-native'
 import { Feather } from '@expo/vector-icons'
+import { Summary } from '../screens/Summary'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -43,7 +44,7 @@ export function AppRoutes() {
       />
       <Screen
         name="Resumo"
-        component={Register}
+        component={Summary}
         options={{
           tabBarIcon: ({ size, color }) => (
             <Feather name="pie-chart" size={size} color={color} />

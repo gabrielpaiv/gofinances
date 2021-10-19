@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 
 const { CLIENT_ID } = process.env
 const { REDIRECT_URI } = process.env
@@ -35,6 +41,9 @@ const AuthContext = createContext({} as AuthContextData)
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const userStorageKey = '@gofinances:user'
 
   async function signInWithGoogle() {
     try {
@@ -52,13 +61,14 @@ function AuthProvider({ children }: AuthProviderProps) {
           `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`
         )
         const userInfo = await response.json()
-
-        setUser({
+        const userLogged = {
           id: userInfo.id,
           email: userInfo.email,
           name: userInfo.given_name,
           photo: userInfo.picture
-        })
+        }
+        setUser(userLogged)
+        await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged))
       }
     } catch (error) {
       throw new Error(error as string)
@@ -75,17 +85,32 @@ function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (credential) {
-        setUser({
+        const userLogged = {
           id: String(credential.user),
           email: credential.email!,
           name: credential.fullName!.givenName!,
           photo: undefined
-        })
+        }
+        setUser(userLogged)
+        await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged))
       }
     } catch (error) {
       throw new Error(error as string)
     }
   }
+
+  useEffect(() => {
+    async function loadUserStorageData() {
+      const userStoraged = await AsyncStorage.getItem(userStorageKey)
+
+      if (userStoraged) {
+        const userLogged = JSON.parse(userStoraged) as User
+        setUser(userLogged)
+      }
+      setIsLoading(false)
+    }
+    loadUserStorageData()
+  }, [])
 
   return (
     <AuthContext.Provider value={{ user, signInWithGoogle, signInWithApple }}>

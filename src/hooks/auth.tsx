@@ -4,6 +4,8 @@ const { CLIENT_ID } = process.env
 const { REDIRECT_URI } = process.env
 
 import * as AuthSession from 'expo-auth-session'
+import * as AppleAuthentication from 'expo-apple-authentication'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -26,6 +28,7 @@ type AuthorizationResponse = {
 interface AuthContextData {
   user: User
   signInWithGoogle: () => Promise<void>
+  signInWithApple: () => Promise<void>
 }
 
 const AuthContext = createContext({} as AuthContextData)
@@ -57,13 +60,35 @@ function AuthProvider({ children }: AuthProviderProps) {
           photo: userInfo.picture
         })
       }
-    } catch (err: any) {
-      throw new Error(err)
+    } catch (error) {
+      throw new Error(error as string)
+    }
+  }
+
+  async function signInWithApple() {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL
+        ]
+      })
+
+      if (credential) {
+        setUser({
+          id: String(credential.user),
+          email: credential.email!,
+          name: credential.fullName!.givenName!,
+          photo: undefined
+        })
+      }
+    } catch (error) {
+      throw new Error(error as string)
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle }}>
+    <AuthContext.Provider value={{ user, signInWithGoogle, signInWithApple }}>
       {children}
     </AuthContext.Provider>
   )

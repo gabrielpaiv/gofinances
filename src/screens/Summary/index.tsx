@@ -23,6 +23,7 @@ import { useTheme } from 'styled-components'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { addMonths, format, subMonths } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { useAuth } from '../../hooks/auth'
 
 type TransactionData = {
   transactionType: 'positive' | 'negative'
@@ -48,6 +49,8 @@ export function Summary() {
 
   const theme = useTheme()
 
+  const { user } = useAuth()
+
   function handleDateChange(action: 'next' | 'prev') {
     if (action === 'next') {
       setSelectedDate(addMonths(selectedDate, 1))
@@ -58,7 +61,7 @@ export function Summary() {
 
   async function loadData() {
     setIsLoading(true)
-    const dataKey = '@gofinances:transactions'
+    const dataKey = `@gofinances:transactions_user:${user.id}`
     const rawResponse = await AsyncStorage.getItem(dataKey)
     const response: TransactionData[] = rawResponse
       ? JSON.parse(rawResponse)

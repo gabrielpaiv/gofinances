@@ -67,7 +67,9 @@ export function Dashboard() {
           })
       )
     )
-
+    if (isNaN(lastTransaction.valueOf())) {
+      return 0
+    }
     return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString(
       'pt-BR',
       { month: 'long' }
@@ -75,7 +77,7 @@ export function Dashboard() {
   }
 
   async function loadTransactions() {
-    const dataKey = '@gofinances:transactions'
+    const dataKey = `@gofinances:transactions_user:${user.id}`
     const response = await AsyncStorage.getItem(dataKey)
     const rawTransactions: DataListProps[] = response
       ? JSON.parse(response)
@@ -118,7 +120,8 @@ export function Dashboard() {
 
     const lastEntry = getLastTransactionDate(rawTransactions, 'positive')
     const lastExpenditure = getLastTransactionDate(rawTransactions, 'negative')
-    const totalInterval = `01 à ${lastExpenditure}`
+    const totalInterval =
+      lastExpenditure === 0 ? 'Não há transações' : `01 à ${lastExpenditure}`
 
     let total = totalEntries - totalExpenditures
 
@@ -128,14 +131,20 @@ export function Dashboard() {
           style: 'currency',
           currency: 'BRL'
         }),
-        lastTransaction: `Última entrada dia ${lastEntry}`
+        lastTransaction:
+          lastEntry === 0
+            ? 'Não há transações'
+            : `Última entrada dia ${lastEntry}`
       },
       expenditures: {
         amount: totalExpenditures.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
         }),
-        lastTransaction: `Última saída dia ${lastExpenditure}`
+        lastTransaction:
+          lastExpenditure === 0
+            ? 'Não há transações'
+            : `Última saída dia ${lastExpenditure}`
       },
       total: {
         amount: total.toLocaleString('pt-BR', {

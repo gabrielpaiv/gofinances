@@ -47,7 +47,7 @@ export function Register() {
   const [transactionType, setTransactionType] = useState('')
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
 
-  const navigation = useNavigation<NavigationProps>()
+  // const navigation = useNavigation<NavigationProps>()
 
   const { user } = useAuth()
 
@@ -92,7 +92,7 @@ export function Register() {
         key: 'category',
         name: 'Categoria'
       })
-      navigation.navigate('Listagem')
+      // navigation.navigate('Listagem')
     } catch (error) {
       console.log(error)
       Alert.alert('Não foi possível salvar')

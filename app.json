@@ -1,10 +1,31 @@
 {
   "expo": {
-    "name": "gofinances",
+    "name": "GoFinances",
+    "icon": "./assets/icon.png",
+    "version": "1.0.0",
     "slug": "gofinances",
     "scheme": "gofinances",
-    "version": "1.0.0",
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.gofinances",
+      "versionCode": 1
+    },
+    "ios": {
+      "bundleIdentifier": "com.gofinances",
+      "buildNumber": "1.0.0"
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#5636D3"
+    },
+    "description": "Aplicativo de finanças pessoais."
+  },
+  "adaptiveIcon": {
+    "foregroundImage": "./assets/adaptive-icon.png",
+    "backgroundColor": "#5636D3"
   },
   "name": "gofinances"
 }
